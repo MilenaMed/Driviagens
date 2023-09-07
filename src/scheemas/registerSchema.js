@@ -5,6 +5,6 @@ export const userSchema = joi.object({
     lastName: joi.string().min(2).max(100).required(),
 });
 
-export const citieSchema = joi.object({
+export const citySchema = joi.object({
     name: joi.string().min(2).max(50).required(),
 });
