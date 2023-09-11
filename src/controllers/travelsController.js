@@ -17,3 +17,4 @@ export async function postTravels(request, response) {
         return response.status(500).send(err.message)
     }
 };
+
