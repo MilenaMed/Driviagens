@@ -1,10 +1,10 @@
-import { db } from "../database/database.connection.js";
+import { findingCity, postFlight, getAllFlight , getSomeFlight} from "../repositories/flightRepository.js";
 
 //POST-flights
 export async function postRegisterFlight(request, response) {
     const { origin, destination, date } = request.body;
-    const existingOriginCity = await db.query(`SELECT * FROM cities WHERE id=$1;`, [origin])
-    const existingDestinationCity = await db.query(`SELECT * FROM cities WHERE id=$1;`, [destination])
+    const existingOriginCity = await findingCity(origin)
+    const existingDestinationCity = await findingCity(destination)
     const currentDate = new Date();
 
     if (existingOriginCity.rowCount === 0 || existingDestinationCity.rowCount === 0) {
@@ -29,7 +29,7 @@ export async function postRegisterFlight(request, response) {
         }
 
         try {
-            await db.query(`INSERT INTO flights (origin, destination, date) VALUES ($1, $2, $3);`, [origin, destination, date]);
+            await postFlight(origin, destination, date);
             return response.status(201).send("Registred flight")
         } catch (err) {
             return response.status(500).send(err.message)
@@ -43,7 +43,6 @@ export async function getFlight(request, response) {
     const { destination } = request.query;
     const smallerDate = request.query['smaller-date'];
     const biggerDate = request.query['bigger-date'];
-    console.log(biggerDate)
 
     if ((!biggerDate && smallerDate) || (biggerDate && !smallerDate)) {
         return response.sendStatus(422);
@@ -55,50 +54,11 @@ export async function getFlight(request, response) {
 
     try {
         if (!origin && !destination && !smallerDate && !biggerDate) {
-            const allFlights = await db.query(`
-            SELECT
-                travels.id,
-                origin.name AS origin,
-                destination.name AS destination,
-                flights.date AS date
-            FROM travels
-            JOIN
-                flights ON travels."flightId" = flights.id
-            JOIN
-                cities origin ON flights."origin" = origin.id
-            JOIN
-                cities destination ON flights."destination" = destination.id
-            ORDER BY flights.date;
-        `);
-
+            const allFlights = await getAllFlight();
             return response.status(200).send(allFlights.rows);
         }
 
-        const allFlightsQuery = await db.query(`
-        SELECT
-          travels.id,
-          origin.name AS origin,
-          destination.name AS destination,
-          flights.date AS date
-        FROM travels
-        JOIN
-          flights ON travels."flightId" = flights.id
-        JOIN
-          cities origin ON flights."origin" = origin.id
-        JOIN
-          cities destination ON flights."destination" = destination.id
-        WHERE (origin.name = $1 OR $1 IS NULL)
-        AND
-        (destination.name = $2 OR $2 IS NULL)
-        AND
-        (flights.date >= $3 OR $3 IS NULL )
-        AND 
-        (flights.date <= $4 OR $4 IS NULL)
-        ORDER BY
-        flights.date;
-      `, [origin, destination, smallerDate, biggerDate]);
-
-
+        const allFlightsQuery = await getSomeFlight(origin, destination, smallerDate, biggerDate);
         return response.status(200).send(allFlightsQuery.rows)
     } catch (err) {
         return response.status(500).send(err.message);
