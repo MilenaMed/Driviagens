@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
-export async function findingCity(city) {
-    return db.query(`SELECT * FROM cities WHERE id=$1;`, [city]);
+export async function findingCity(destination) {
+    return db.query(`SELECT * FROM cities WHERE id=$1;`, [destination]);
 }
 
 export async function postFlight(origin, destination, date) {

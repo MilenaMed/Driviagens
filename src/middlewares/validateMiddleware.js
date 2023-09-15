@@ -1,12 +1,12 @@
+import { errors } from "../erros/errors.js";
+
 export function validateMiddleware(schema) {
     return (request, response, next) => {
-        const validation = schema.validate(request.body, { abortEarly: false })
 
+        const validation = schema.validate(request.body);
         if (validation.error) {
-            const errors = validation.error.details.map(detail => detail.message)
-            return response.status(422).send(errors)
+            return response.send(validation.error.details[0].message)
         }
-
-        next()
+        next();
     }
 }

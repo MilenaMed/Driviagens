@@ -1,4 +1,4 @@
-import { findingCity, postFlight, getAllFlight , getSomeFlight} from "../repositories/flightRepository.js";
+import { findingCity, postFlight, getAllFlight, getSomeFlight } from "../repositories/flightRepository.js";
 
 //POST-flights
 export async function postRegisterFlight(request, response) {

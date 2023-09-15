@@ -1,22 +1,19 @@
-import { db } from "../database/database.connection.js";
 import { addTravel, findingFlight, findingPassenger, getAllTravels, getSomeTravels } from "../repositories/travelsRepository.js";
-
-
+import httpStatus from "http-status";
+import { travelsServices } from "../services/travelsServices.js";
 //POST - travels
 export async function postTravels(request, response) {
     const { passengerId, flightId } = request.body;
-    const existingPassengerId = await findingPassenger(passengerId)
-    const existingFlightId = await findingFlight(flightId)
-
-    if (existingFlightId.rowCount === 0 || existingPassengerId.rowCount === 0) {
-        return response.sendStatus(404)
-    }
+   // const existingPassengerId = await findingPassenger(passengerId)
+    //const existingFlightId = await findingFlight(flightId)
+    travelsServices.ifExistingIds(passengerId,flightId)
+    
 
     try {
         await addTravel(passengerId, flightId);
-        return response.status(201).send("Registred travel")
-    } catch (err) {
-        return response.status(500).send(err.message)
+        return response.sendStatus(httpStatus.CREATED)
+    } catch (error) {
+        return response.status(500).send(error.message)
     }
 };
 //GET - travels
