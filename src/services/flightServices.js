@@ -23,4 +23,16 @@ async function validateDate(date) {
 
     if (currentDate > flightDate) throw errors.invalidDate();
 }
-export const flightServices = { ifExistingOriginCity, ifExistingDestinationCity, ifAreSameCities, validateDate }
+
+function haveDate(biggerDate, smallerDate) {
+    if ((!biggerDate && smallerDate) || (biggerDate && !smallerDate)) throw errors.wrongData();
+}
+function comparateDate(biggerDate, smallerDate) {
+    const biggerDateFormat = utilsDate(biggerDate)
+    const smallerDateFormat = utilsDate(smallerDate)
+
+    if (smallerDateFormat > biggerDateFormat) throw errors.errorSmallerBiggerDate()
+}
+
+
+export const flightServices = {comparateDate, ifExistingOriginCity, haveDate, ifExistingDestinationCity, ifAreSameCities, validateDate }

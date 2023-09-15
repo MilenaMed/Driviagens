@@ -23,23 +23,15 @@ export async function getFlight(request, response) {
     const smallerDate = request.query['smaller-date'];
     const biggerDate = request.query['bigger-date'];
 
-    if ((!biggerDate && smallerDate) || (biggerDate && !smallerDate)) {
-        return response.sendStatus(422);
+    if (!origin && !destination && !smallerDate && !biggerDate) {
+        const allFlights = await getAllFlight();
+        console.log(allFlights)
+        return response.status(200).send(allFlights.rows);
     }
 
-    if (smallerDate > biggerDate) {
-        return response.status(400).send('The date smaller-date cannot be larger than the date bigger-date.');
-    }
-
-    try {
-        if (!origin && !destination && !smallerDate && !biggerDate) {
-            const allFlights = await getAllFlight();
-            return response.status(200).send(allFlights.rows);
-        }
-
-        const allFlightsQuery = await getSomeFlight(origin, destination, smallerDate, biggerDate);
-        return response.status(200).send(allFlightsQuery.rows)
-    } catch (err) {
-        return response.status(500).send(err.message);
-    }
+    await flightServices.haveDate(biggerDate, smallerDate)
+    await flightServices.comparateDate(biggerDate, smallerDate)
+    
+    const allFlightsQuery = await getSomeFlight(origin, destination, smallerDate, biggerDate);
+    return response.status(200).send(allFlightsQuery.rows)
 }

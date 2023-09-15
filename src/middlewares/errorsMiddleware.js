@@ -29,5 +29,8 @@ export default function errorHandler(error, request, response, next) {
   if (error.type === "tooMany") {
     return response.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
   }
+if(error.type === "errorSmallerBiggerDate"){
+  return response.status(httpStatus.BAD_REQUEST).send(error.message);
+}
   return response.status(httpStatus.INTERNAL_SERVER_ERROR)
 }

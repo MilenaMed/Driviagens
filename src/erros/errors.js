@@ -43,12 +43,19 @@ function invalidDate() {
   };
 }
 
+function errorSmallerBiggerDate(){
+  return {
+    type: "errorSmallerBiggerDate",
+    message: `The date smaller-date cannot be larger than the date bigger-date.`,
+  };
+}
 
 export const errors = {
   conflict,
   notFountData,
   wrongData,
   tooMany,
+  errorSmallerBiggerDate,
   notFoundCities,
   sameCities,
   invalidDate
