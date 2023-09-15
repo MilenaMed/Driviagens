@@ -30,7 +30,12 @@ function sameCities(){
     message: `Origin and destination cannot be the same`
   }
 }
-
+function tooMany(){
+  return {
+    type: "tooMany",
+    message: `Too many results`
+  }
+}
 function invalidDate() {
   return {
     type: "invalidDate",
@@ -43,6 +48,7 @@ export const errors = {
   conflict,
   notFountData,
   wrongData,
+  tooMany,
   notFoundCities,
   sameCities,
   invalidDate

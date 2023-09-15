@@ -11,24 +11,17 @@ export async function postTravels(request, response) {
 };
 //GET - travels
 export async function getTravels(request, response) {
-    const { name } = request.query;
+    const { name } = request.query
+    const travelsQueryName = await getSomeTravels(name);
+    const allTravels = await getAllTravels();
 
-    try {
-        if (!name) {
-            const allTravels = await getAllTravels();
-            return response.status(200).send(allTravels.rows);
-        }
-
-        const travelsQueryName = await getSomeTravels(name);
-
-        if (travelsQueryName.rows.length > 10) {
-            return response.status(500).send('Too many results');
-        }
-
-        return response.status(200).send(travelsQueryName.rows);
-
-    } catch (err) {
-        return response.status(500).send(err.message)
+    if (!name) {
+        await travelsServices.manyTravels(allTravels);
+        return response.status(200).send(allTravels.rows);
     }
+    await travelsServices.manyTravels(travelsQueryName);
+
+    return response.status(200).send(travelsQueryName.rows);
+
 };
 

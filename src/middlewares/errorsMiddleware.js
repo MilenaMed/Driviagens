@@ -25,5 +25,9 @@ export default function errorHandler(error, request, response, next) {
   if(error.type === "invalidDate"){
     return response.status(httpStatus.UNPROCESSABLE_ENTITY).send(error.message);
   }
+
+  if (error.type === "tooMany") {
+    return response.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
+  }
   return response.status(httpStatus.INTERNAL_SERVER_ERROR)
 }
