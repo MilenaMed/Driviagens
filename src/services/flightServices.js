@@ -4,30 +4,23 @@ import { utilsDate } from "../utils/utilsDate.js";
 
 async function ifExistingOriginCity(origin) {
     const existingOriginCity = await findingCity(origin);
-    if (!existingOriginCity) {
-        throw errors.notFoundCities();
-    }
+    if (existingOriginCity.rowCount === 0) throw errors.notFoundCities();
 }
 
 async function ifExistingDestinationCity(destination) {
     const existingDestinationCity = await findingCity(destination);
-    if (existingDestinationCity) {
-        throw errors.notFoundCities();
-    }
+    if (existingDestinationCity.rowCount === 0) throw errors.notFoundCities();
 }
 
 
 function ifAreSameCities(origin, destination) {
-    if (origin === destination) {
-        throw errors.conflictCities();
-    }
+    if (origin === destination) throw errors.sameCities();
 }
+
 async function validateDate(date) {
     const flightDate = utilsDate(date);
     const currentDate = new Date();
 
-    if (currentDate > flightDate) {
-        throw errors.invalidDate();
-    }
+    if (currentDate > flightDate) throw errors.invalidDate();
 }
 export const flightServices = { ifExistingOriginCity, ifExistingDestinationCity, ifAreSameCities, validateDate }

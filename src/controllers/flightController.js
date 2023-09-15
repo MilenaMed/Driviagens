@@ -1,40 +1,19 @@
-import { findingCity, postFlight, getAllFlight, getSomeFlight } from "../repositories/flightRepository.js";
+import { postFlight, getAllFlight, getSomeFlight } from "../repositories/flightRepository.js";
+import { flightServices } from "../services/flightServices.js";
+import httpStatus from "http-status";
 
 //POST-flights
 export async function postRegisterFlight(request, response) {
     const { origin, destination, date } = request.body;
-    const existingOriginCity = await findingCity(origin)
-    const existingDestinationCity = await findingCity(destination)
-    const currentDate = new Date();
 
-    if (existingOriginCity.rowCount === 0 || existingDestinationCity.rowCount === 0) {
-        return response.status(404).send("City ​​not found")
-    }
+    await flightServices.ifExistingOriginCity(origin)
+    await flightServices.ifExistingDestinationCity(destination)
+    await flightServices.ifAreSameCities(origin, destination)
+    await flightServices.validateDate(date)
 
-    if (origin === destination) {
-        return response.status(409).send("Origin and destination cannot be the same")
-    }
+    await postFlight(origin, destination, date);
+    response.sendStatus(httpStatus.CREATED)
 
-    const dateParts = date.split('-');
-
-    if (dateParts.length === 3) {
-        const day = parseInt(dateParts[0], 10);
-        const month = parseInt(dateParts[1], 10) - 1;
-        const year = parseInt(dateParts[2], 10);
-
-        const flightDate = new Date(year, month, day);
-
-        if (currentDate > flightDate) {
-            return response.status(422).send("It's not possible to register flights for past dates.");
-        }
-
-        try {
-            await postFlight(origin, destination, date);
-            return response.status(201).send("Registred flight")
-        } catch (err) {
-            return response.status(500).send(err.message)
-        }
-    }
 };
 
 //GET - flights
