@@ -34,5 +34,4 @@ function comparateDate(biggerDate, smallerDate) {
     if (smallerDateFormat > biggerDateFormat) throw errors.errorSmallerBiggerDate()
 }
 
-
 export const flightServices = {comparateDate, ifExistingOriginCity, haveDate, ifExistingDestinationCity, ifAreSameCities, validateDate }

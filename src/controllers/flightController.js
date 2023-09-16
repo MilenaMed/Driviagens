@@ -25,13 +25,12 @@ export async function getFlight(request, response) {
 
     if (!origin && !destination && !smallerDate && !biggerDate) {
         const allFlights = await getAllFlight();
-        console.log(allFlights)
         return response.status(200).send(allFlights.rows);
     }
+   // await flightServices.haveDate(biggerDate, smallerDate)
+    //await flightServices.comparateDate(biggerDate, smallerDate)
 
-    await flightServices.haveDate(biggerDate, smallerDate)
-    await flightServices.comparateDate(biggerDate, smallerDate)
-    
     const allFlightsQuery = await getSomeFlight(origin, destination, smallerDate, biggerDate);
+    console.log(getSomeFlight)
     return response.status(200).send(allFlightsQuery.rows)
 }

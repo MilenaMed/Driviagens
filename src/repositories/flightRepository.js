@@ -22,22 +22,26 @@ export async function getAllFlight() {
 
 export async function getSomeFlight(origin, destination, smallerDate, biggerDate) {
     return db.query(`
-        SELECT
-        flights.id,
-          origin.name AS origin,
-          destination.name AS destination,
-          flights.date AS date
-        FROM flights
-        JOIN cities origin ON flights."origin" = origin.id
-        JOIN cities destination ON flights."destination" = destination.id
-        WHERE (origin.name = $1 OR $1 IS NULL)
-        AND
-        (destination.name = $2 OR $2 IS NULL)
-        AND
-        (flights.date >= $3 OR $3 IS NULL )
-        AND 
-        (flights.date <= $4 OR $4 IS NULL)
-        ORDER BY
-        flights.date;
-      `, [origin, destination, smallerDate, biggerDate])
+    SELECT
+    travels.id,
+    origin.name AS origin,
+    destination.name AS destination,
+    flights.date AS date
+  FROM travels
+  JOIN
+    flights ON travels."flightId" = flights.id
+  JOIN
+    cities origin ON flights."origin" = origin.id
+  JOIN
+    cities destination ON flights."destination" = destination.id
+  WHERE (origin.name = $1 OR $1 IS NULL)
+  AND
+  (destination.name = $2 OR $2 IS NULL)
+  AND
+  (flights.date >= $3 OR $3 IS NULL )
+  AND 
+  (flights.date <= $4 OR $4 IS NULL)
+  ORDER BY
+  flights.date;
+`, [origin, destination, smallerDate, biggerDate]);
 }
